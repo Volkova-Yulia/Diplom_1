@@ -2,6 +2,10 @@ package praktikum;
 
 import org.junit.*;
 import org.mockito.*;
+
+import java.util.Arrays;
+import java.util.Collections;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
@@ -14,7 +18,6 @@ public class BurgerTest {
     private Ingredient mockIngredient;
 
     private Burger burger;
-
 
     @Before
     public void setUp() {
@@ -32,10 +35,8 @@ public class BurgerTest {
     // Добавление ингредиента
     @Test
     public void shouldAddIngredient() {
-        assertTrue(burger.ingredients.isEmpty());
         burger.addIngredient(mockIngredient);
-        assertEquals(1, burger.ingredients.size());
-        assertSame(mockIngredient, burger.ingredients.get(0));
+        assertEquals(Collections.singletonList(mockIngredient), burger.ingredients);
     }
 
     // Порядок при добавлении
@@ -47,8 +48,7 @@ public class BurgerTest {
         burger.addIngredient(first);
         burger.addIngredient(second);
 
-        assertSame(first, burger.ingredients.get(0));
-        assertSame(second, burger.ingredients.get(1));
+        assertEquals(Arrays.asList(first, second), burger.ingredients);
     }
 
     // Удаление из середины
@@ -64,8 +64,7 @@ public class BurgerTest {
 
         burger.removeIngredient(1);
 
-        assertSame(first, burger.ingredients.get(0));
-        assertSame(third, burger.ingredients.get(1));
+        assertEquals(Arrays.asList(first, third), burger.ingredients);
     }
 
     // Удаление первого
@@ -81,9 +80,7 @@ public class BurgerTest {
 
         burger.removeIngredient(0);
 
-        assertSame(second, burger.ingredients.get(0));
-        assertSame(third, burger.ingredients.get(1));
-
+        assertEquals(Arrays.asList(second, third), burger.ingredients);
     }
 
     // Удаление последнего
@@ -99,9 +96,7 @@ public class BurgerTest {
 
         burger.removeIngredient(2);
 
-        assertSame(first, burger.ingredients.get(0));
-        assertSame(second, burger.ingredients.get(1));
-
+        assertEquals(Arrays.asList(first, second), burger.ingredients);
     }
 
     // Перемещение вперёд
@@ -117,9 +112,7 @@ public class BurgerTest {
 
         burger.moveIngredient(0, 2);
 
-        assertSame(second, burger.ingredients.get(0));
-        assertSame(third, burger.ingredients.get(1));
-        assertSame(first, burger.ingredients.get(2));
+        assertEquals(Arrays.asList(second, third, first), burger.ingredients);
     }
 
     // Перемещение назад
@@ -135,9 +128,7 @@ public class BurgerTest {
 
         burger.moveIngredient(2, 0);
 
-        assertSame(third, burger.ingredients.get(0));
-        assertSame(first, burger.ingredients.get(1));
-        assertSame(second, burger.ingredients.get(2));
+        assertEquals(Arrays.asList(third, first, second), burger.ingredients);
     }
 
     // Перемещение на своё место
@@ -153,8 +144,6 @@ public class BurgerTest {
 
         burger.moveIngredient(1, 1);
 
-        assertSame(first, burger.ingredients.get(0));
-        assertSame(second, burger.ingredients.get(1));
-        assertSame(third, burger.ingredients.get(2));
+        assertEquals(Arrays.asList(first, second, third), burger.ingredients);
     }
 }

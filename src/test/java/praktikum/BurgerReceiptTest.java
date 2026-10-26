@@ -1,55 +1,56 @@
 package praktikum;
 
 import org.junit.Test;
-import static org.junit.Assert.assertNotEquals;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class BurgerReceiptTest {
 
-    // Проверка отображения булочки в чеке дважды
-    @Test
-    public void shouldWrapReceiptWithBunName() {
+    private Burger burgerWithBun() {
         Bun bun = mock(Bun.class);
         when(bun.getName()).thenReturn("Краторная");
         when(bun.getPrice()).thenReturn(100f);
 
         Burger burger = new Burger();
         burger.setBuns(bun);
+        return burger;
+    }
+
+    // Проверка отображения булочки в чеке дважды
+    @Test
+    public void shouldWrapReceiptWithBunName() {
+        Burger burger = burgerWithBun();
 
         String receipt = burger.getReceipt();
 
-        assertTrue(receipt.startsWith("(==== Краторная ====)"));
-        assertNotEquals(receipt.indexOf("Краторная"), receipt.lastIndexOf("Краторная"));
+        String expected = String.format("(==== Краторная ====)%n(==== Краторная ====)%n%nPrice: %f%n", 200f);
+        assertEquals(expected, receipt);
     }
+
     // Формат строки ингредиента
     @Test
     public void shouldFormatIngredientLine() {
-        Bun bun = mock(Bun.class);
-        when(bun.getName()).thenReturn("Краторная");
-        when(bun.getPrice()).thenReturn(100f);
+        Burger burger = burgerWithBun();
 
         Ingredient ingredient = mock(Ingredient.class);
         when(ingredient.getType()).thenReturn(IngredientType.FILLING);
         when(ingredient.getName()).thenReturn("Котлета");
         when(ingredient.getPrice()).thenReturn(50f);
-
-        Burger burger = new Burger();
-        burger.setBuns(bun);
         burger.addIngredient(ingredient);
 
         String receipt = burger.getReceipt();
 
-        assertTrue(receipt.contains("Краторная"));
-        assertTrue(receipt.contains("= filling Котлета ="));
+        String expected = String.format("(==== Краторная ====)%n= filling Котлета =%n(==== Краторная ====)%n%nPrice: %f%n", 250f);
+        assertEquals(expected, receipt);
     }
+
     // Порядок ингредиентов в чеке
     @Test
     public void shouldKeepIngredientOrderInReceipt() {
-        Bun bun = mock(Bun.class);
-        when(bun.getName()).thenReturn("Краторная");
-        when(bun.getPrice()).thenReturn(100f);
+        Burger burger = burgerWithBun();
 
         Ingredient ingredientMeat = mock(Ingredient.class);
         when(ingredientMeat.getType()).thenReturn(IngredientType.FILLING);
@@ -66,34 +67,29 @@ public class BurgerReceiptTest {
         when(ingredientCoffee.getName()).thenReturn("C");
         when(ingredientCoffee.getPrice()).thenReturn(25f);
 
-        Burger burger = new Burger();
-        burger.setBuns(bun);
         burger.addIngredient(ingredientMeat);
         burger.addIngredient(ingredientSoup);
         burger.addIngredient(ingredientCoffee);
 
         String receipt = burger.getReceipt();
 
-        assertTrue(receipt.indexOf("A") < receipt.indexOf("B"));
-        assertTrue(receipt.indexOf("B") < receipt.indexOf("C"));
+        String expected = String.format("(==== Краторная ====)%n= filling A =%n= filling B =%n= filling C =%n(==== Краторная ====)%n%nPrice: %f%n", 250f);
+        assertEquals(expected, receipt);
     }
+
     // Итоговая цена в чеке
     @Test
     public void shouldContainPriceLine() {
-        Bun bun = mock(Bun.class);
-        when(bun.getName()).thenReturn("Краторная");
-        when(bun.getPrice()).thenReturn(100f);
+        Burger burger = burgerWithBun();
 
         Ingredient ingredient = mock(Ingredient.class);
         when(ingredient.getType()).thenReturn(IngredientType.FILLING);
         when(ingredient.getName()).thenReturn("Котлета");
         when(ingredient.getPrice()).thenReturn(50f);
-
-        Burger burger = new Burger();
-        burger.setBuns(bun);
         burger.addIngredient(ingredient);
 
         String receipt = burger.getReceipt();
+
         assertTrue(receipt.contains("Price: 250"));
     }
 }
